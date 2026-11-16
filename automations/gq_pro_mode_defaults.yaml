@@ -1,0 +1,47 @@
+- id: gq_pro_mode_defaults
+  alias: "蒸烤箱 切换模式时套用默认温度与时长"
+  description: 依据 DP105 实测的默认值，切换模式后自动填温度/时长
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: select.chu_fang_zheng_kao_xiang_gq_pro_peng_ren_mo_shi
+  variables:
+    defaults:
+      "纯蒸": [100, "00:20:00"]
+      "高温蒸": [110, "00:20:00"]
+      "上下烤": [180, "00:20:00"]
+      "3D热风": [180, "00:20:00"]
+      "顶部热风": [140, "00:20:00"]
+      "风扇烤": [180, "00:20:00"]
+      "底部热风": [220, "00:20:00"]
+      "大面积烤": [180, "00:20:00"]
+      "下烤": [180, "00:20:00"]
+      "低湿嫩烤": [180, "00:20:00"]
+      "中湿嫩烤": [180, "00:20:00"]
+      "高湿嫩烤": [180, "00:20:00"]
+      "空气炸": [190, "00:20:00"]
+      "养生炖": [110, "00:40:00"]
+      "解冻": [50, "00:20:00"]
+      "速热": [140, "00:15:00"]
+      "发酵": [30, "00:20:00"]
+      "保温": [60, "00:20:00"]
+      "杀菌": [100, "00:30:00"]
+      "烘干": [180, null]
+      "除垢": [100, null]
+    preset: "{{ defaults.get(trigger.to_state.state) }}"
+  condition:
+    - condition: template
+      value_template: "{{ preset not in (none, 'None') }}"
+  action:
+    - action: number.set_value
+      target:
+        entity_id: number.chu_fang_zheng_kao_xiang_gq_pro_she_ding_wen_du
+      data:
+        value: "{{ preset[0] }}"
+    - condition: template
+      value_template: "{{ preset[1] not in (none, 'None') }}"
+    - action: time.set_value
+      target:
+        entity_id: time.chu_fang_zheng_kao_xiang_gq_pro_peng_ren_shi_chang
+      data:
+        time: "{{ preset[1] }}"
