@@ -56,7 +56,7 @@
       unique_id: gq_pro_reservation_start
       icon: mdi:clock-start
       state: >
-        {% set end = states('time.chu_fang_zheng_kao_xiang_gq_pro_yu_yue_jie_shu_shi_jian_she_bei') %}
+        {% set end = states('time.chu_fang_zheng_kao_xiang_gq_pro_yu_yue_jie_shu_shi_jian') %}
         {% set dur = states('time.chu_fang_zheng_kao_xiang_gq_pro_peng_ren_shi_chang') %}
         {% if end in ('unknown', 'unavailable', 'none', '00:00:00')
               or dur in ('unknown', 'unavailable', 'none') %}
