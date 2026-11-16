@@ -160,3 +160,56 @@ entities:
           - dps_val: 256
             value: false
           - value: true
+
+  - entity: select
+    name: Mode
+    icon: "mdi:stove"
+    dps:
+      - id: 105
+        name: option
+        type: string
+        mapping:
+          - dps_val: "none"
+            value: "无"
+          - dps_val: "1"
+            value: "纯蒸"
+          - dps_val: "2"
+            value: "高温蒸"
+          - dps_val: "3"
+            value: "上下烤"
+          - dps_val: "4"
+            value: "3D热风"
+          - dps_val: "5"
+            value: "顶部热风"
+          - dps_val: "6"
+            value: "风扇烤"
+          - dps_val: "7"
+            value: "底部热风"
+          - dps_val: "8"
+            value: "大面积烤"
+          - dps_val: "9"
+            value: "下烤"
+          - dps_val: "10"
+            value: "低湿嫩烤"
+          - dps_val: "11"
+            value: "中湿嫩烤"
+          - dps_val: "12"
+            value: "高湿嫩烤"
+          - dps_val: "13"
+            value: "空气炸"
+          - dps_val: "14"
+            value: "养生炖"
+          - dps_val: "15"
+            value: "解冻"
+          - dps_val: "16"
+            value: "速热"
+          - dps_val: "17"
+            value: "发酵"
+          - dps_val: "19"
+            value: "保温"
+          - dps_val: "21"
+            value: "杀菌"
+          - dps_val: "22"
+            value: "烘干"
+          - dps_val: "23"
+            value: "除垢"

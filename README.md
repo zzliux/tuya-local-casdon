@@ -164,6 +164,7 @@ template: !include gq_pro_templates.yaml
 | `switch.*` | 启动/停止（DP2） |
 | `sensor.*烹饪状态*` | wait / cooking / done / pause |
 | `sensor.*剩余时间*` | 分钟（设备原值） |
+| `select.*Mode*` | **模式选择**（22 项中文，含「无」） |
 | `sensor.*Program*` | 模式原始值（数字，见 `docs/modes.md`） |
 | `binary_sensor.*问题*` | 故障（**已排除门位**） |
 | `binary_sensor.*门*` | 门开/关（模板实体） |
@@ -191,9 +192,14 @@ template: !include gq_pro_templates.yaml
 
 本仓库的配置已经把门位从「问题」里排除，并单独做了门实体。如果你自己改映射，注意别把 256 当成故障——我们踩过这个坑。
 
-**4. 模式（DP105）只标定了一部分**
+**4. 模式（DP105）已完整标定**
 
-见 `docs/modes.md`。目前只确认 `13 = 空气炸`，其余是数字。没人点遍所有模式的话，建议先把 `Program` 当只读数字用。
+21 个模式全部对上（详见 `docs/modes.md`），可以用 `select.*Mode*` 直接切换。
+
+需要注意两个设备行为：
+
+- 写入模式**不会**同时设置温度/时长（至少通过本地协议只改 105），仍需单独设 `climate` 的温度和 `time` 的烹饪时长
+- 「杀菌 / 烘干 / 除垢」不支持预约，只能直接启动
 
 ---
 
