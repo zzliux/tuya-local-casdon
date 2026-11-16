@@ -4,10 +4,9 @@
       unique_id: gq_pro_preheating
       icon: mdi:heat-wave
       state: >
-        {% set st = states('sensor.chu_fang_zheng_kao_xiang_gq_pro_peng_ren_zhuang_tai') %}
-        {% set tgt = states('number.chu_fang_zheng_kao_xiang_gq_pro_she_ding_wen_du') | float(0) %}
-        {% set cur = states('sensor.chu_fang_zheng_kao_xiang_gq_pro_dang_qian_wen_du') | float(0) %}
-        {{ st == 'cooking' and tgt > 0 and cur < tgt - 1 }}
+        {# 设备 DP109 上报预热状态，再与运行状态求交，避免取消后 109 残留造成误显示 #}
+        {{ is_state('sensor.chu_fang_zheng_kao_xiang_gq_pro_peng_ren_zhuang_tai', 'cooking')
+           and is_state('binary_sensor.chu_fang_zheng_kao_xiang_gq_pro_yu_re_zhong', 'on') }}
 
 - trigger:
     - platform: time_pattern

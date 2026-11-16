@@ -24,6 +24,46 @@ entities:
         type: boolean
         optional: true
 
+  # ---- 暂停 / 继续 / 取消 ----
+  - entity: button
+    name: 暂停
+    icon: "mdi:pause"
+    dps:
+      - id: 2
+        name: button
+        type: boolean
+        optional: true
+        mapping:
+          - dps_val: false
+            value: true
+
+  - entity: button
+    name: 继续
+    icon: "mdi:play"
+    dps:
+      - id: 2
+        name: button
+        type: boolean
+        optional: true
+
+
+  # ---- 预热状态（设备上报，非推断）----
+  - entity: binary_sensor
+    name: 预热中（设备）
+    icon: "mdi:heat-wave"
+    class: heat
+    category: diagnostic
+    dps:
+      - id: 109
+        name: sensor
+        type: string
+        optional: true
+        mapping:
+          - dps_val: preheating
+            value: true
+          - dps_val: no_preheat
+            value: false
+
   # ---- 温度 ----
   - entity: number
     name: 设定温度
