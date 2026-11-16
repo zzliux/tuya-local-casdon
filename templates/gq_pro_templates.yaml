@@ -4,9 +4,9 @@
       unique_id: gq_pro_preheating
       icon: mdi:heat-wave
       state: >
-        {% set st = states('sensor.zheng_kao_xiang_gq_pro_peng_ren_zhuang_tai') %}
-        {% set tgt = state_attr('climate.zheng_kao_xiang_gq_pro', 'temperature') | float(0) %}
-        {% set cur = state_attr('climate.zheng_kao_xiang_gq_pro', 'current_temperature') | float(0) %}
+        {% set st = states('sensor.chu_fang_zheng_kao_xiang_gq_pro_peng_ren_zhuang_tai') %}
+        {% set tgt = states('number.chu_fang_zheng_kao_xiang_gq_pro_she_ding_wen_du') | float(0) %}
+        {% set cur = states('sensor.chu_fang_zheng_kao_xiang_gq_pro_dang_qian_wen_du') | float(0) %}
         {{ st == 'cooking' and tgt > 0 and cur < tgt - 1 }}
 
 - trigger:
@@ -19,10 +19,10 @@
       device_class: duration
       unit_of_measurement: s
       state: >
-        {% set st = states('sensor.zheng_kao_xiang_gq_pro_peng_ren_zhuang_tai') %}
-        {% set tgt = state_attr('climate.zheng_kao_xiang_gq_pro', 'temperature') | float(0) %}
-        {% set cur = state_attr('climate.zheng_kao_xiang_gq_pro', 'current_temperature') | float(0) %}
-        {% set rem = states('sensor.zheng_kao_xiang_gq_pro_sheng_yu_shi_jian') | int(0) %}
+        {% set st = states('sensor.chu_fang_zheng_kao_xiang_gq_pro_peng_ren_zhuang_tai') %}
+        {% set tgt = states('number.chu_fang_zheng_kao_xiang_gq_pro_she_ding_wen_du') | float(0) %}
+        {% set cur = states('sensor.chu_fang_zheng_kao_xiang_gq_pro_dang_qian_wen_du') | float(0) %}
+        {% set rem = states('sensor.chu_fang_zheng_kao_xiang_gq_pro_sheng_yu_shi_jian') | int(0) %}
         {% set start = this.attributes.get('phase_start') %}
         {% if st != 'cooking' %}
           0
@@ -33,9 +33,9 @@
         {% endif %}
       attributes:
         phase_start: >
-          {% set st = states('sensor.zheng_kao_xiang_gq_pro_peng_ren_zhuang_tai') %}
-          {% set tgt = state_attr('climate.zheng_kao_xiang_gq_pro', 'temperature') | float(0) %}
-          {% set cur = state_attr('climate.zheng_kao_xiang_gq_pro', 'current_temperature') | float(0) %}
+          {% set st = states('sensor.chu_fang_zheng_kao_xiang_gq_pro_peng_ren_zhuang_tai') %}
+          {% set tgt = states('number.chu_fang_zheng_kao_xiang_gq_pro_she_ding_wen_du') | float(0) %}
+          {% set cur = states('sensor.chu_fang_zheng_kao_xiang_gq_pro_dang_qian_wen_du') | float(0) %}
           {% set old = this.attributes.get('phase_start') %}
           {% if st == 'cooking' and tgt > 0 and cur >= tgt - 1 %}
             {{ old if old not in (none, 'none', '') else now().timestamp() }}
