@@ -1,10 +1,13 @@
 - id: gq_pro_mode_defaults
-  alias: "蒸烤箱 切换模式时套用默认温度与时长"
-  description: 设备通过本地协议改模式时不会套用默认值（面板才会），因此由 HA 补上
+  alias: "蒸烤箱 套用模式默认温度与时长"
+  description: 本地协议改模式不会带默认值，面板才会；另外设备关机时写入被忽略，开机后需补一次
   mode: single
   trigger:
     - platform: state
       entity_id: select.chu_fang_zheng_kao_xiang_gq_pro_peng_ren_mo_shi
+    - platform: state
+      entity_id: switch.chu_fang_zheng_kao_xiang_gq_pro_dian_yuan
+      to: "on"
   variables:
     defaults:
       "纯蒸": [100, "00:20:00"]
@@ -28,11 +31,12 @@
       "杀菌": [100, "00:30:00"]
       "烘干": [180, null]
       "除垢": [100, null]
-    preset: "{{ defaults.get(trigger.to_state.state) }}"
+    preset: "{{ defaults.get(states('select.chu_fang_zheng_kao_xiang_gq_pro_peng_ren_mo_shi')) }}"
   condition:
     - condition: template
       value_template: "{{ preset not in (none, 'None') }}"
   action:
+    - delay: 1
     - action: number.set_value
       target:
         entity_id: number.chu_fang_zheng_kao_xiang_gq_pro_she_ding_wen_du

@@ -50,3 +50,20 @@
       state: >
         {% set raw = states('sensor.chu_fang_zheng_kao_xiang_gq_pro_status_raw') | int(0) %}
         {{ (raw // 256) % 2 == 1 }}
+
+- sensor:
+    - name: "GQ Pro 预约开始时间"
+      unique_id: gq_pro_reservation_start
+      icon: mdi:clock-start
+      state: >
+        {% set end = states('time.chu_fang_zheng_kao_xiang_gq_pro_yu_yue_jie_shu_shi_jian_she_bei') %}
+        {% set dur = states('time.chu_fang_zheng_kao_xiang_gq_pro_peng_ren_shi_chang') %}
+        {% if end in ('unknown', 'unavailable', 'none', '00:00:00')
+              or dur in ('unknown', 'unavailable', 'none') %}
+          unknown
+        {% else %}
+          {% set e = end.split(':') | map('int') | list %}
+          {% set d = dur.split(':') | map('int') | list %}
+          {% set s = ((e[0] * 60 + e[1]) - (d[0] * 60 + d[1])) % 1440 %}
+          {{ '%02d:%02d' % (s // 60, s % 60) }}
+        {% endif %}

@@ -112,7 +112,8 @@ entities:
           max: 1440
 
   - entity: time
-    name: 预约结束时间
+    name: 预约结束时间（设备）
+    category: diagnostic
     translation_key: timer
     dps:
       - id: 9
