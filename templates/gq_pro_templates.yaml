@@ -67,3 +67,27 @@
           {% set s = ((e[0] * 60 + e[1]) - (d[0] * 60 + d[1])) % 1440 %}
           {{ '%02d:%02d' % (s // 60, s % 60) }}
         {% endif %}
+
+- sensor:
+    - name: "GQ Pro 预约时段"
+      unique_id: gq_pro_reservation_window
+      icon: mdi:calendar-clock
+      state: >-
+        {% set end = states('time.chu_fang_zheng_kao_xiang_gq_pro_yu_yue_jie_shu_shi_jian') %}
+        {% set dur = states('time.chu_fang_zheng_kao_xiang_gq_pro_peng_ren_shi_chang') %}
+        {% if end in ('unknown', 'unavailable', 'none', '00:00:00')
+              or dur in ('unknown', 'unavailable', 'none') %}
+          unknown
+        {% else %}
+          {% set eh, em = end.split(':')[0] | int(0), end.split(':')[1] | int(0) %}
+          {% set dh, dm = dur.split(':')[0] | int(0), dur.split(':')[1] | int(0) %}
+          {% set end_min = eh * 60 + em %}
+          {% set dur_min = dh * 60 + dm %}
+          {% set now_min = now().hour * 60 + now().minute %}
+          {% set end_day = 0 if end_min > now_min else 1 %}
+          {% set start_total = end_min - dur_min + end_day * 1440 %}
+          {% set start_day = start_total // 1440 %}
+          {% set start_min = start_total % 1440 %}
+          {% set labels = ['今天', '明天', '后天'] %}
+          {{- labels[start_day] }} {{ '%02d:%02d' | format(start_min // 60, start_min % 60) }} → {{ labels[end_day] }} {{ '%02d:%02d' | format(end_min // 60, end_min % 60) -}}
+        {% endif %}
