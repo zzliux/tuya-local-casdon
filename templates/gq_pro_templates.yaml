@@ -1,0 +1,53 @@
+# 凯度 GQ Pro 蒸烤箱衍生实体（tuya_local 只给分钟级 DP，这里做秒级倒计时 + 预热判断）
+- binary_sensor:
+    - name: "GQ Pro 预热中"
+      unique_id: gq_pro_preheating
+      icon: mdi:heat-wave
+      state: >
+        {% set st = states('sensor.zheng_kao_xiang_gq_pro_peng_ren_zhuang_tai') %}
+        {% set tgt = state_attr('climate.zheng_kao_xiang_gq_pro', 'temperature') | float(0) %}
+        {% set cur = state_attr('climate.zheng_kao_xiang_gq_pro', 'current_temperature') | float(0) %}
+        {{ st == 'cooking' and tgt > 0 and cur < tgt - 1 }}
+
+- trigger:
+    - platform: time_pattern
+      seconds: "/1"
+  sensor:
+    - name: "GQ Pro 剩余时间"
+      unique_id: gq_pro_remaining_seconds
+      icon: mdi:timer-sand
+      device_class: duration
+      unit_of_measurement: s
+      state: >
+        {% set st = states('sensor.zheng_kao_xiang_gq_pro_peng_ren_zhuang_tai') %}
+        {% set tgt = state_attr('climate.zheng_kao_xiang_gq_pro', 'temperature') | float(0) %}
+        {% set cur = state_attr('climate.zheng_kao_xiang_gq_pro', 'current_temperature') | float(0) %}
+        {% set rem = states('sensor.zheng_kao_xiang_gq_pro_sheng_yu_shi_jian') | int(0) %}
+        {% set start = this.attributes.get('phase_start') %}
+        {% if st != 'cooking' %}
+          0
+        {% elif tgt > 0 and cur >= tgt - 1 and start not in (none, 'none', '') %}
+          {{ [ rem * 60 - (now().timestamp() - start | float(0)) | int, 0 ] | max }}
+        {% else %}
+          {{ rem * 60 }}
+        {% endif %}
+      attributes:
+        phase_start: >
+          {% set st = states('sensor.zheng_kao_xiang_gq_pro_peng_ren_zhuang_tai') %}
+          {% set tgt = state_attr('climate.zheng_kao_xiang_gq_pro', 'temperature') | float(0) %}
+          {% set cur = state_attr('climate.zheng_kao_xiang_gq_pro', 'current_temperature') | float(0) %}
+          {% set old = this.attributes.get('phase_start') %}
+          {% if st == 'cooking' and tgt > 0 and cur >= tgt - 1 %}
+            {{ old if old not in (none, 'none', '') else now().timestamp() }}
+          {% else %}
+            none
+          {% endif %}
+
+- binary_sensor:
+    - name: "GQ Pro 门"
+      unique_id: gq_pro_door
+      device_class: door
+      icon: mdi:door
+      state: >
+        {% set raw = states('sensor.chu_fang_zheng_kao_xiang_gq_pro_status_raw') | int(0) %}
+        {{ (raw // 256) % 2 == 1 }}

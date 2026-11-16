@@ -1,0 +1,162 @@
+name: Oven
+products:
+  - id: asgqmfnxo0lsiaa4
+    manufacturer: Casdon
+    model: GQ Pro
+
+entities:
+  - entity: climate
+    translation_key: oven
+    dps:
+      - id: 1
+        name: hvac_mode
+        type: boolean
+        mapping:
+          - dps_val: true
+            value: "heat"
+          - dps_val: false
+            value: "off"
+      - id: 7
+        name: temperature
+        type: integer
+        optional: true
+        unit: C
+        range:
+          min: 0
+          max: 500
+        mapping:
+          - step: 5
+      - id: 8
+        name: current_temperature
+        type: integer
+        optional: true
+      - id: 102
+        name: hvac_action
+        type: string
+        optional: true
+        mapping:
+          - dps_val: cooking
+            value: heating
+          - dps_val: preheating
+            value: preheating
+          - dps_val: preheat_warming
+            value: preheating
+          - dps_val: reservation
+            value: idle
+          - dps_val: cancel
+            value: idle
+          - dps_val: done
+            value: idle
+          - dps_val: pause
+            value: idle
+          - dps_val: "wait"
+            value: idle
+
+  - entity: switch
+    name: Start
+    icon: "mdi:play-pause"
+    dps:
+      - id: 2
+        name: switch
+        type: boolean
+        optional: true
+
+  - entity: time
+    translation_key: cooking_time
+    dps:
+      - id: 10
+        name: minute
+        type: integer
+        optional: true
+        range:
+          min: 0
+          max: 1440
+
+  - entity: time
+    name: Start time
+    translation_key: timer
+    dps:
+      - id: 9
+        name: minute
+        type: integer
+        optional: true
+        range:
+          min: 0
+          max: 1440
+
+  - entity: sensor
+    translation_key: time_remaining
+    class: duration
+    dps:
+      - id: 11
+        name: sensor
+        type: integer
+        optional: true
+        unit: min
+        class: measurement
+
+  - entity: sensor
+    class: enum
+    translation_key: cooking_status
+    dps:
+      - id: 102
+        name: sensor
+        type: string
+        mapping:
+          - dps_val: wait
+            value: wait
+          - dps_val: reservation
+            value: reservation
+          - dps_val: cooking
+            value: cooking
+          - dps_val: preheating
+            value: preheating
+          - dps_val: preheat_warming
+            value: preheat_warming
+          - dps_val: cancel
+            value: cancel
+          - dps_val: done
+            value: done
+          - dps_val: pause
+            value: pause
+
+  - entity: light
+    name: Light
+    dps:
+      - id: 103
+        name: switch
+        type: boolean
+
+  - entity: sensor
+    name: Program
+    dps:
+      - id: 105
+        name: sensor
+        type: string
+        optional: true
+
+  - entity: sensor
+    name: Status raw
+    category: diagnostic
+    dps:
+      - id: 13
+        name: sensor
+        type: bitfield
+        optional: true
+
+  - entity: binary_sensor
+    category: diagnostic
+    class: problem
+    translation_key: problem
+    dps:
+      - id: 13
+        type: bitfield
+        name: sensor
+        optional: true
+        mapping:
+          # bit8 (256) 是门开状态，不是故障，这里排除掉
+          - dps_val: 0
+            value: false
+          - dps_val: 256
+            value: false
+          - value: true
