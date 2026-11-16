@@ -1,13 +1,5 @@
-# 凯度 GQ Pro 蒸烤箱衍生实体（tuya_local 只给分钟级 DP，这里做秒级倒计时 + 预热判断）
-- binary_sensor:
-    - name: "GQ Pro 预热中"
-      unique_id: gq_pro_preheating
-      icon: mdi:heat-wave
-      state: >
-        {# 设备 DP109 上报预热状态，再与运行状态求交，避免取消后 109 残留造成误显示 #}
-        {{ is_state('sensor.chu_fang_zheng_kao_xiang_gq_pro_peng_ren_zhuang_tai', 'cooking')
-           and is_state('binary_sensor.chu_fang_zheng_kao_xiang_gq_pro_yu_re_zhong', 'on') }}
-
+# 仅保留需要触发器/属性的模板实体（秒级倒计时）
+# 其余派生实体（门/预热中/预约开始时间/预约时段）已改为 UI 辅助元素，可挂到设备页
 - trigger:
     - platform: time_pattern
       seconds: "/1"
@@ -41,53 +33,3 @@
           {% else %}
             none
           {% endif %}
-
-- binary_sensor:
-    - name: "GQ Pro 门"
-      unique_id: gq_pro_door
-      device_class: door
-      icon: mdi:door
-      state: >
-        {% set raw = states('sensor.chu_fang_zheng_kao_xiang_gq_pro_status_raw') | int(0) %}
-        {{ (raw // 256) % 2 == 1 }}
-
-- sensor:
-    - name: "GQ Pro 预约开始时间"
-      unique_id: gq_pro_reservation_start
-      icon: mdi:clock-start
-      state: >
-        {% set end = states('time.chu_fang_zheng_kao_xiang_gq_pro_yu_yue_jie_shu_shi_jian') %}
-        {% set dur = states('time.chu_fang_zheng_kao_xiang_gq_pro_peng_ren_shi_chang') %}
-        {% if end in ('unknown', 'unavailable', 'none', '00:00:00')
-              or dur in ('unknown', 'unavailable', 'none') %}
-          unknown
-        {% else %}
-          {% set e = end.split(':') | map('int') | list %}
-          {% set d = dur.split(':') | map('int') | list %}
-          {% set s = ((e[0] * 60 + e[1]) - (d[0] * 60 + d[1])) % 1440 %}
-          {{ '%02d:%02d' % (s // 60, s % 60) }}
-        {% endif %}
-
-- sensor:
-    - name: "GQ Pro 预约时段"
-      unique_id: gq_pro_reservation_window
-      icon: mdi:calendar-clock
-      state: >-
-        {% set end = states('time.chu_fang_zheng_kao_xiang_gq_pro_yu_yue_jie_shu_shi_jian') %}
-        {% set dur = states('time.chu_fang_zheng_kao_xiang_gq_pro_peng_ren_shi_chang') %}
-        {% if end in ('unknown', 'unavailable', 'none', '00:00:00')
-              or dur in ('unknown', 'unavailable', 'none') %}
-          unknown
-        {% else %}
-          {% set eh, em = end.split(':')[0] | int(0), end.split(':')[1] | int(0) %}
-          {% set dh, dm = dur.split(':')[0] | int(0), dur.split(':')[1] | int(0) %}
-          {% set end_min = eh * 60 + em %}
-          {% set dur_min = dh * 60 + dm %}
-          {% set now_min = now().hour * 60 + now().minute %}
-          {% set end_day = 0 if end_min > now_min else 1 %}
-          {% set start_total = end_min - dur_min + end_day * 1440 %}
-          {% set start_day = start_total // 1440 %}
-          {% set start_min = start_total % 1440 %}
-          {% set labels = ['今天', '明天', '后天'] %}
-          {{- labels[start_day] }} {{ '%02d:%02d' | format(start_min // 60, start_min % 60) }} → {{ labels[end_day] }} {{ '%02d:%02d' | format(end_min // 60, end_min % 60) -}}
-        {% endif %}
