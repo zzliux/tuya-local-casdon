@@ -1,14 +1,25 @@
-# 凯度 GQ Pro 蒸烤箱 × Home Assistant
+# 凯度蒸烤箱 × Home Assistant —— tuya-local 配置包
 
-把**凯度（Casdon）GQ Pro 蒸烤箱**本地接入 Home Assistant 的配置包：不需要刷机、不依赖厂商云端，通过 Tuya Local 走局域网协议直连。
+把**凯度（Casdon）蒸烤箱**本地接入 Home Assistant 的**设备配置文件**：不需要刷机、不依赖厂商云端，通过已有的 Tuya Local 集成走局域网协议直连。
 
-仓库只包含**设备配置（DP 映射）**和**可选的模板实体**，不含任何集成代码。
+## 这是什么 / 不是什么
+
+| | |
+| --- | --- |
+| ✅ 是 | [tuya-local](https://github.com/make-all/tuya-local) 的 `devices/*.yaml` 设备配置（DP 映射） |
+| ✅ 是 | 可选的模板实体（预热判断、秒级倒计时、门状态） |
+| ❌ 不是 | HACS / Marketplace 里能"安装"的集成 |
+| ❌ 不是 | 独立的 Python 插件，本仓库不含任何集成代码 |
+| 依赖 | 你必须先装好 **tuya-local** 集成（Marketplace 里搜 "Tuya Local"） |
+
+所以正确的使用方式是「把 YAML 复制进 tuya-local 的 devices 目录」，而不是在 Marketplace 里添加本仓库。详见下文。
 
 ```
 devices/casdon_gq_pro.yaml      tuya_local 设备配置（核心）
 templates/gq_pro_templates.yaml 可选：预热判断 / 秒级倒计时 / 门状态
 docs/dp-map.md                  DP 对照表（含未知项）
 docs/modes.md                   模式枚举（105）采集进度
+scripts/install.sh              把上面两个文件装进 HA 配置目录
 ```
 
 ---
